@@ -6,8 +6,8 @@ const btnGo = $('#go');
 const elInteractions = $('#interactions');
 
 const models = {
-    'gpt-3.5-turbo': {
-        name: 'GPT-3.5 Turbo',
+    'gemma:2b-instruct': {
+        name: 'Gemma2',
         desc: 'GPT-3.5 Turbo models are capable and cost-effective.',
         price: {
             input: 0.001 / 1000,
@@ -35,8 +35,8 @@ const models = {
 const localStorageGet = key => {
     return window.localStorage.getItem(key);
 };
-const localStorageSet = (key, value) => {
-    window.localStorage.setItem(key, value);
+const localStorageSet = (key, v) => {
+    window.localStorage.setItem(key, v);
 };
 
 const markdownToHtml = markdown => {
@@ -44,7 +44,7 @@ const markdownToHtml = markdown => {
 };
 
 if (!localStorageGet('model'))
-    localStorageSet('model', 'gpt-3.5-turbo');
+    localStorageSet('model', 'gemma:2b-instruct');
 if (!localStorageGet('systemPrompt'))
     localStorageSet('systemPrompt', 'You are a helpful assistant.');
 
@@ -63,7 +63,7 @@ const getModelResponse = async(prompt, n = 1) => {
         let res;
         while (retryCount > 0) {
             try {
-                res = await axios.post('https://api.openai.com/v1/chat/completions', {
+                res = await axios.post('http://localhost:11434/v1/chat/completions', {
                     model: model,
                     n: n,
                     messages: [{
@@ -74,9 +74,6 @@ const getModelResponse = async(prompt, n = 1) => {
                         content: prompt
                     }]
                 }, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorageGet('apiKey')}`,
-                    },
                     timeout: requestTimeout
                 });
                 break;
